@@ -1,0 +1,25 @@
+# Dependencias instaladas pelo npm
+node_modules/
+
+# Arquivos gerados pelo Next.js
+.next/
+out/
+
+# Variaveis de ambiente e segredos
+.env
+.env.local
+.env.*.local
+
+# Relatorios de testes
+coverage/
+playwright-report/
+test-results/
+
+# Logs
+*.log
+
+# Arquivos do sistema operacional e do editor
+.DS_Store
+.idea/
+.vscode/
+
