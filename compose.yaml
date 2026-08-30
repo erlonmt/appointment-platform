@@ -1,0 +1,18 @@
+services:
+  web:
+    image: node:24-bookworm-slim
+    user: "1000:1000"
+    working_dir: /app
+    init: true
+
+    ports:
+      - "3000:3000"
+
+    volumes:
+      - ./web:/app
+
+    environment:
+      HOME: /tmp
+      npm_config_cache: /tmp/npm-cache
+
+    command: npm run dev -- --hostname 0.0.0.0
