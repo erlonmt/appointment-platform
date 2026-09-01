@@ -9,10 +9,7 @@ export function StepCard({ step }: StepCardProps) {
 
   return (
     <li className="border-l border-cyan-400/40 pl-6">
-      <span
-        aria-hidden="true"
-        className="text-sm font-bold text-cyan-400"
-      >
+      <span aria-hidden="true" className="text-sm font-bold text-cyan-400">
         {formattedNumber}
       </span>
 

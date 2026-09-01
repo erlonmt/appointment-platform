@@ -36,7 +36,7 @@ export default function Home() {
         id="inicio"
         className="mx-auto flex w-full max-w-6xl flex-1 flex-col justify-center px-6 py-24 sm:px-8 lg:px-12"
       >
-        <p className="mb-4 text-sm font-semibold uppercase tracking-[0.2em] text-cyan-400">
+        <p className="mb-4 text-sm font-semibold tracking-[0.2em] text-cyan-400 uppercase">
           Plataforma de agendamentos
         </p>
 
@@ -71,7 +71,7 @@ export default function Home() {
       >
         <div className="mx-auto max-w-6xl px-6 sm:px-8 lg:px-12">
           <div className="max-w-2xl">
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-cyan-400">
+            <p className="text-sm font-semibold tracking-[0.2em] text-cyan-400 uppercase">
               Recursos essenciais
             </p>
 
@@ -88,13 +88,10 @@ export default function Home() {
         </div>
       </section>
 
-      <section
-        id="como-funciona"
-        className="border-t border-white/10 py-24"
-      >
+      <section id="como-funciona" className="border-t border-white/10 py-24">
         <div className="mx-auto max-w-6xl px-6 sm:px-8 lg:px-12">
           <div className="max-w-2xl">
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-cyan-400">
+            <p className="text-sm font-semibold tracking-[0.2em] text-cyan-400 uppercase">
               Como funciona
             </p>
 
