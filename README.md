@@ -1,24 +1,85 @@
-# Sr.Will Booking
+# Appointment Platform
 
-Sistema de agendamentos para a barbearia Sr.Will, desenvolvido como projeto de estudo e preparado para atender várias barbearias no futuro.
+Plataforma de agendamentos para negócios que trabalham com horários, profissionais e serviços.
 
-## Objetivos do projeto
+O projeto está sendo desenvolvido como estudo de uma aplicação SaaS multiempresa, com foco em organização, segurança e evolução incremental.
 
-- Permitir que clientes escolham serviços, barbeiros, datas e horários.
-- Oferecer confirmação automática ou manual por barbeiro.
-- Organizar horários de trabalho, intervalos, folgas e bloqueios.
-- Registrar atendimentos concluídos e calcular o faturamento diário.
-- Enviar confirmações e lembretes pelo WhatsApp.
+## Funcionalidades planejadas
 
-## Tecnologias planejadas
+- Cadastro de organizações e unidades.
+- Cadastro de profissionais, serviços, preços e durações.
+- Horários de trabalho, intervalos, folgas e bloqueios.
+- Escolha de serviço e profissional pelo cliente.
+- Opção “qualquer profissional disponível”.
+- Confirmação automática ou manual por profissional.
+- Prevenção de agendamentos sobrepostos.
+- Finalização de atendimentos.
+- Faturamento diário, semanal, mensal e por profissional.
+- Confirmações e lembretes pelo WhatsApp.
 
-- Next.js e TypeScript
+## Tecnologias
+
+- Next.js
+- React
+- TypeScript
 - Tailwind CSS
-- Supabase e PostgreSQL
+- Supabase
+- PostgreSQL
 - Docker e Docker Compose
+- ESLint
+- Prettier
 - Playwright e Vitest
+
+## Executando localmente
+
+É necessário ter Docker e Docker Compose instalados.
+
+Inicie o ambiente:
+
+```bash
+docker compose up
+```
+
+Acesse:
+
+```text
+http://localhost:3000
+```
+
+Encerre o ambiente com `Ctrl+C`.
+
+## Verificações de qualidade
+
+```bash
+docker compose run --rm web npm run format:check
+docker compose run --rm web npm run lint
+docker compose run --rm web npm run build
+```
+
+Para aplicar a formatação:
+
+```bash
+docker compose run --rm web npm run format
+```
+
+## Estrutura inicial
+
+```text
+.
+├── compose.yaml
+├── README.md
+└── web
+    ├── src
+    │   ├── app
+    │   ├── components
+    │   └── data
+    └── package.json
+```
 
 ## Estado atual
 
-Projeto em fase inicial de configuração.
-
+- Ambiente Next.js configurado com Docker.
+- Landing page responsiva.
+- Componentes e dados da landing page separados.
+- Formatação e análise de código configuradas.
+- Modelagem do domínio em andamento.
