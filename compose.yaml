@@ -1,9 +1,33 @@
 services:
+  db:
+    image: postgres:18-bookworm
+
+    ports:
+      - "5432:5432"
+
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+    volumes:
+      - postgres_data:/var/lib/postgresql
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   web:
     image: node:24-bookworm-slim
     user: "1000:1000"
     working_dir: /app
     init: true
+
+    depends_on:
+      db:
+        condition: service_healthy
 
     ports:
       - "3000:3000"
@@ -14,5 +38,9 @@ services:
     environment:
       HOME: /tmp
       npm_config_cache: /tmp/npm-cache
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
 
     command: npm run dev -- --hostname 0.0.0.0
+
+volumes:
+  postgres_data:
