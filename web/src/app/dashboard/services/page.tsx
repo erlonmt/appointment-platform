@@ -1,9 +1,8 @@
 import Link from "next/link";
 import { connection } from "next/server";
 
+import { DEMO_ORGANIZATION_ID } from "@/config/demo";
 import { listActiveServicesByOrganization } from "@/data-access/services";
-
-const DEMO_ORGANIZATION_ID = "10000000-0000-4000-8000-000000000001";
 
 const currencyFormatter = new Intl.NumberFormat("pt-BR", {
   style: "currency",
@@ -22,12 +21,21 @@ export default async function ServicesPage() {
   return (
     <main className="min-h-screen bg-slate-950 px-6 py-12 text-white">
       <section className="mx-auto max-w-5xl">
-        <Link
-          href="/"
-          className="text-sm font-semibold text-cyan-400 transition hover:text-cyan-300"
-        >
-          ← Voltar para o início
-        </Link>
+        <nav className="flex items-center justify-between gap-4">
+          <Link
+            href="/"
+            className="text-sm font-semibold text-cyan-400 transition hover:text-cyan-300"
+          >
+            ← Início
+          </Link>
+
+          <Link
+            href="/dashboard/professionals"
+            className="text-sm font-semibold text-cyan-400 transition hover:text-cyan-300"
+          >
+            Ver profissionais →
+          </Link>
+        </nav>
 
         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
