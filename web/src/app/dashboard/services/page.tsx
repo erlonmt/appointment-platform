@@ -1,6 +1,6 @@
-import Link from "next/link";
 import { connection } from "next/server";
 
+import { DashboardNavigation } from "@/components/dashboard/dashboard-navigation";
 import { DEMO_ORGANIZATION_ID } from "@/config/demo";
 import { listActiveServicesByOrganization } from "@/data-access/services";
 
@@ -21,21 +21,7 @@ export default async function ServicesPage() {
   return (
     <main className="min-h-screen bg-slate-950 px-6 py-12 text-white">
       <section className="mx-auto max-w-5xl">
-        <nav className="flex items-center justify-between gap-4">
-          <Link
-            href="/"
-            className="text-sm font-semibold text-cyan-400 transition hover:text-cyan-300"
-          >
-            ← Início
-          </Link>
-
-          <Link
-            href="/dashboard/professionals"
-            className="text-sm font-semibold text-cyan-400 transition hover:text-cyan-300"
-          >
-            Ver profissionais →
-          </Link>
-        </nav>
+        <DashboardNavigation currentSection="services" />
 
         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>

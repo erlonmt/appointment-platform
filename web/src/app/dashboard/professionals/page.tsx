@@ -1,6 +1,6 @@
-import Link from "next/link";
 import { connection } from "next/server";
 
+import { DashboardNavigation } from "@/components/dashboard/dashboard-navigation";
 import { ProfessionalCard } from "@/components/dashboard/professional-card";
 import { DEMO_ORGANIZATION_ID } from "@/config/demo";
 import { listActiveProfessionalsByOrganization } from "@/data-access/professionals";
@@ -14,21 +14,7 @@ export default async function ProfessionalsPage() {
   return (
     <main className="min-h-screen bg-slate-950 px-6 py-12 text-white">
       <section className="mx-auto max-w-5xl">
-        <nav className="flex items-center justify-between gap-4">
-          <Link
-            href="/"
-            className="text-sm font-semibold text-cyan-400 transition hover:text-cyan-300"
-          >
-            ← Início
-          </Link>
-
-          <Link
-            href="/dashboard/services"
-            className="text-sm font-semibold text-cyan-400 transition hover:text-cyan-300"
-          >
-            Ver serviços →
-          </Link>
-        </nav>
+        <DashboardNavigation currentSection="professionals" />
 
         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
