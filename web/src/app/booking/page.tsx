@@ -2,13 +2,25 @@ import Link from "next/link";
 import { connection } from "next/server";
 
 import { BookingFlow } from "@/components/booking/booking-flow";
-import { DEMO_ORGANIZATION_ID } from "@/config/demo";
+import { DEMO_ORGANIZATION_ID, DEMO_UNIT_ID } from "@/config/demo";
+import { listBookingProfessionalOptionsByUnit } from "@/data-access/booking";
 import { listActiveServicesByOrganization } from "@/data-access/services";
 
 export default async function BookingPage() {
   await connection();
 
-  const services = await listActiveServicesByOrganization(DEMO_ORGANIZATION_ID);
+  const [services, professionalOptions] = await Promise.all([
+    listActiveServicesByOrganization(DEMO_ORGANIZATION_ID),
+    listBookingProfessionalOptionsByUnit(DEMO_ORGANIZATION_ID, DEMO_UNIT_ID),
+  ]);
+
+  const bookableServiceIds = new Set(
+    professionalOptions.map((professional) => professional.serviceId),
+  );
+
+  const servicesAvailableForBooking = services.filter((service) =>
+    bookableServiceIds.has(service.id),
+  );
 
   return (
     <main className="min-h-screen bg-slate-950 px-6 py-12 text-white">
@@ -26,16 +38,19 @@ export default async function BookingPage() {
           </p>
 
           <h1 className="mt-3 text-4xl font-bold tracking-tight">
-            Escolha um serviço
+            Agende seu atendimento
           </h1>
 
           <p className="mt-4 max-w-2xl text-slate-300">
-            Selecione o serviço que deseja agendar. Na próxima etapa você
-            escolherá o profissional.
+            Escolha o serviço, o profissional e, nas próximas etapas, a data e o
+            horário.
           </p>
         </header>
 
-        <BookingFlow services={services} />
+        <BookingFlow
+          services={servicesAvailableForBooking}
+          professionalOptions={professionalOptions}
+        />
       </section>
     </main>
   );
