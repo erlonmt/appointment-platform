@@ -2,8 +2,11 @@
 
 import { useState } from "react";
 
+import { BookingTimeSlotSelection } from "./booking-time-slot-selection";
+import type { BookingTimeSlot } from "@/data-access/booking-availability";
+
 type ConfirmationMode = "automatic" | "manual";
-type BookingStep = "service" | "professional";
+type BookingStep = "service" | "time-slot" | "professional";
 
 interface BookingServiceOption {
   id: string;
@@ -49,6 +52,10 @@ export function BookingFlow({
     string | null
   >(null);
 
+  const [selectedSlot, setSelectedSlot] = useState<BookingTimeSlot | null>(
+    null,
+  );
+
   const selectedService = services.find(
     (service) => service.id === selectedServiceId,
   );
@@ -63,19 +70,26 @@ export function BookingFlow({
 
   function handleSelectService(serviceId: string) {
     setSelectedServiceId(serviceId);
+    setSelectedSlot(null);
     setSelectedProfessionalId(null);
   }
 
-  function handleContinueToProfessional() {
+  function handleContinueToTimeSlot() {
     if (!selectedService) {
       return;
     }
 
-    setCurrentStep("professional");
+    setCurrentStep("time-slot");
+  }
+
+  function handleSelectSlot(slot: BookingTimeSlot | null) {
+    setSelectedSlot(slot);
+    setSelectedProfessionalId(null);
   }
 
   function handleBackToService() {
     setCurrentStep("service");
+    setSelectedSlot(null);
     setSelectedProfessionalId(null);
   }
 
@@ -84,6 +98,67 @@ export function BookingFlow({
       <p className="mt-10 rounded-2xl border border-slate-800 bg-slate-900 p-6 text-slate-300">
         Nenhum serviço está disponível para agendamento.
       </p>
+    );
+  }
+
+  if (currentStep === "time-slot" && selectedService) {
+    return (
+      <section className="mt-10">
+        <button
+          type="button"
+          onClick={handleBackToService}
+          className="text-sm font-semibold text-cyan-400 transition hover:text-cyan-300"
+        >
+          ← Trocar serviço
+        </button>
+
+        <div className="mt-6">
+          <p className="text-sm font-semibold tracking-[0.2em] text-cyan-400 uppercase">
+            Etapa 2 de 4
+          </p>
+
+          <h2 className="mt-3 text-3xl font-bold">
+            Escolha a data e o horário
+          </h2>
+
+          <p className="mt-3 text-slate-300">
+            Serviço escolhido:{" "}
+            <strong className="text-white">{selectedService.name}</strong>
+          </p>
+        </div>
+
+        <BookingTimeSlotSelection
+          key={selectedService.id}
+          serviceId={selectedService.id}
+          selectedSlot={selectedSlot}
+          onSelectSlot={handleSelectSlot}
+        />
+
+        <div
+          aria-live="polite"
+          className="mt-6 rounded-2xl border border-slate-800 bg-slate-900 p-5"
+        >
+          {selectedSlot ? (
+            <>
+              <p className="text-slate-200">
+                Horário selecionado:{" "}
+                <strong className="text-white">
+                  {selectedSlot.localStartTime}
+                </strong>
+              </p>
+
+              <p className="mt-2 text-sm text-slate-400">
+                Na próxima etapa você escolherá um profissional disponível nesse
+                horário.
+              </p>
+            </>
+          ) : (
+            <p className="text-slate-400">
+              Escolha uma data, busque os horários e selecione um deles.
+            </p>
+          )}
+        </div>
+      </section>
     );
   }
 
@@ -245,7 +320,7 @@ export function BookingFlow({
         <button
           type="button"
           disabled={!selectedService}
-          onClick={handleContinueToProfessional}
+          onClick={handleContinueToTimeSlot}
           className="rounded-xl bg-cyan-400 px-5 py-3 text-sm font-bold text-slate-950 transition hover:bg-cyan-300 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-400"
         >
           Continuar

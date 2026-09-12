@@ -42,8 +42,8 @@ export default async function BookingPage() {
           </h1>
 
           <p className="mt-4 max-w-2xl text-slate-300">
-            Escolha o serviço, o profissional e, nas próximas etapas, a data e o
-            horário.
+            Escolha o serviço, a data e o horário. Depois, selecione um
+            profissional disponível e confirme seus dados.
           </p>
         </header>
 
