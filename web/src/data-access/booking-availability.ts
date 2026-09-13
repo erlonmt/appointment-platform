@@ -6,12 +6,14 @@ import { databasePool } from "@/lib/database";
 
 export interface BookingTimeSlot {
   startsAt: string;
+  localDate: string;
   localStartTime: string;
   availableProfessionals: number;
 }
 
 interface BookingTimeSlotRow extends QueryResultRow {
   starts_at: Date;
+  local_date: string;
   local_start_time: string;
   available_professionals: number;
 }
@@ -70,6 +72,7 @@ export async function listBookingTimeSlotsByUnit(
       )
       select
         (slot.starts_at at time zone wp.timezone) as starts_at,
+        to_char(slot.starts_at, 'YYYY-MM-DD') as local_date,
         to_char(slot.starts_at, 'HH24:MI') as local_start_time,
         count(distinct wp.professional_id)::integer
           as available_professionals
@@ -123,6 +126,7 @@ export async function listBookingTimeSlotsByUnit(
 
   return result.rows.map((slot) => ({
     startsAt: slot.starts_at.toISOString(),
+    localDate: slot.local_date,
     localStartTime: slot.local_start_time,
     availableProfessionals: slot.available_professionals,
   }));

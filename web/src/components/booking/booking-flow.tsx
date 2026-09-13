@@ -3,10 +3,13 @@
 import { useState } from "react";
 
 import { BookingTimeSlotSelection } from "./booking-time-slot-selection";
+import { BookingCustomerForm } from "./booking-customer-form";
+import type { BookingCustomerDetails } from "./booking-customer-form";
 import type { BookingTimeSlot } from "@/data-access/booking-availability";
 
 type ConfirmationMode = "automatic" | "manual";
-type BookingStep = "service" | "time-slot" | "professional";
+type BookingStep =
+  "service" | "time-slot" | "professional" | "customer" | "review";
 
 interface BookingServiceOption {
   id: string;
@@ -64,6 +67,9 @@ export function BookingFlow({ services }: BookingFlowProps) {
   const [professionalsError, setProfessionalsError] = useState<string | null>(
     null,
   );
+
+  const [customerDetails, setCustomerDetails] =
+    useState<BookingCustomerDetails | null>(null);
 
   const selectedService = services.find(
     (service) => service.id === selectedServiceId,
@@ -155,6 +161,36 @@ export function BookingFlow({ services }: BookingFlowProps) {
     setCurrentStep("time-slot");
     setSelectedSlot(null);
     resetProfessionalStep();
+  }
+
+  function handleContinueToCustomer() {
+    if (
+      !selectedService ||
+      !selectedSlot ||
+      !selectedProfessional ||
+      isLoadingProfessionals
+    ) {
+      return;
+    }
+
+    setCurrentStep("customer");
+  }
+
+  function handleReview(customer: BookingCustomerDetails) {
+    if (!selectedService || !selectedSlot || !selectedProfessional) {
+      return;
+    }
+
+    setCustomerDetails(customer);
+    setCurrentStep("review");
+  }
+
+  function handleBackToProfessional() {
+    setCurrentStep("professional");
+  }
+
+  function handleBackToCustomer() {
+    setCurrentStep("customer");
   }
 
   if (services.length === 0) {
@@ -349,10 +385,124 @@ export function BookingFlow({ services }: BookingFlowProps) {
             </p>
           )}
         </div>
+
+        <button
+          type="button"
+          disabled={!selectedProfessional || isLoadingProfessionals}
+          onClick={handleContinueToCustomer}
+          className="mt-6 rounded-xl bg-cyan-400 px-5 py-3 text-sm font-bold text-slate-950 transition hover:bg-cyan-300 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-400"
+        >
+          Continuar
+        </button>
       </section>
     );
   }
 
+  if (
+    (currentStep === "customer" || currentStep === "review") &&
+    selectedService &&
+    selectedSlot &&
+    selectedProfessional
+  ) {
+    const isReview = currentStep === "review" && customerDetails !== null;
+
+    return (
+      <section className="mt-10">
+        <button
+          type="button"
+          onClick={isReview ? handleBackToCustomer : handleBackToProfessional}
+          className="text-sm font-semibold text-cyan-400 transition hover:text-cyan-300"
+        >
+          {isReview ? "← Editar dados" : "← Trocar profissional"}
+        </button>
+
+        <p className="mt-6 text-sm font-semibold tracking-[0.2em] text-cyan-400 uppercase">
+          Etapa 4 de 4
+        </p>
+
+        <h2 className="mt-3 text-3xl font-bold">
+          {isReview ? "Revise seu agendamento" : "Informe seus dados"}
+        </h2>
+
+        <dl className="mt-8 space-y-4 rounded-2xl border border-slate-800 bg-slate-900 p-6">
+          <div>
+            <dt className="text-sm text-slate-400">Serviço</dt>
+            <dd className="mt-1 font-semibold">{selectedService.name}</dd>
+          </div>
+
+          <div>
+            <dt className="text-sm text-slate-400">Profissional</dt>
+            <dd className="mt-1 font-semibold">
+              {selectedProfessional.professionalName}
+            </dd>
+          </div>
+
+          <div>
+            <dt className="text-sm text-slate-400">Data e horário</dt>
+            <dd className="mt-1 font-semibold">
+              {selectedSlot.localDate.split("-").reverse().join("/")} às{" "}
+              {selectedSlot.localStartTime}
+            </dd>
+          </div>
+
+          <div>
+            <dt className="text-sm text-slate-400">Valor</dt>
+            <dd className="mt-1 font-semibold">
+              {formatCurrency(selectedProfessional.priceCents)}
+            </dd>
+          </div>
+
+          <div>
+            <dt className="text-sm text-slate-400">Duração</dt>
+            <dd className="mt-1 font-semibold">
+              {selectedProfessional.durationMinutes} minutos
+            </dd>
+          </div>
+
+          <div>
+            <dt className="text-sm text-slate-400">Confirmação</dt>
+            <dd className="mt-1 font-semibold">
+              {selectedProfessional.confirmationMode === "automatic"
+                ? "Automática"
+                : "Depende da aprovação do profissional"}
+            </dd>
+          </div>
+
+          {isReview && customerDetails && (
+            <>
+              <div>
+                <dt className="text-sm text-slate-400">Nome</dt>
+                <dd className="mt-1 font-semibold">{customerDetails.name}</dd>
+              </div>
+
+              <div>
+                <dt className="text-sm text-slate-400">Telefone</dt>
+                <dd className="mt-1 font-semibold">{customerDetails.phone}</dd>
+              </div>
+
+              <div>
+                <dt className="text-sm text-slate-400">E-mail</dt>
+                <dd className="mt-1 font-semibold">
+                  {customerDetails.email ?? "Não informado"}
+                </dd>
+              </div>
+            </>
+          )}
+        </dl>
+
+        {isReview ? (
+          <p role="status" className="mt-6 text-slate-300">
+            Confira os dados acima. O agendamento ainda não foi enviado.
+          </p>
+        ) : (
+          <BookingCustomerForm
+            initialValues={customerDetails}
+            onReview={handleReview}
+          />
+        )}
+      </section>
+    );
+  }
   return (
     <section className="mt-10">
       <p className="mb-4 text-sm font-semibold tracking-[0.2em] text-cyan-400 uppercase">
