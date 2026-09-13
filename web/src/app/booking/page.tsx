@@ -47,10 +47,7 @@ export default async function BookingPage() {
           </p>
         </header>
 
-        <BookingFlow
-          services={servicesAvailableForBooking}
-          professionalOptions={professionalOptions}
-        />
+        <BookingFlow services={servicesAvailableForBooking} />
       </section>
     </main>
   );

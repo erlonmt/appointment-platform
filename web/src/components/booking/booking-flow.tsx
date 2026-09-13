@@ -28,7 +28,11 @@ interface BookingProfessionalOption {
 
 interface BookingFlowProps {
   services: BookingServiceOption[];
-  professionalOptions: BookingProfessionalOption[];
+}
+
+interface BookingProfessionalsResponse {
+  professionals?: BookingProfessionalOption[];
+  error?: string;
 }
 
 const currencyFormatter = new Intl.NumberFormat("pt-BR", {
@@ -40,10 +44,7 @@ function formatCurrency(valueInCents: number) {
   return currencyFormatter.format(valueInCents / 100);
 }
 
-export function BookingFlow({
-  services,
-  professionalOptions,
-}: BookingFlowProps) {
+export function BookingFlow({ services }: BookingFlowProps) {
   const [currentStep, setCurrentStep] = useState<BookingStep>("service");
   const [selectedServiceId, setSelectedServiceId] = useState<string | null>(
     null,
@@ -56,22 +57,26 @@ export function BookingFlow({
     null,
   );
 
+  const [availableProfessionals, setAvailableProfessionals] = useState<
+    BookingProfessionalOption[]
+  >([]);
+  const [isLoadingProfessionals, setIsLoadingProfessionals] = useState(false);
+  const [professionalsError, setProfessionalsError] = useState<string | null>(
+    null,
+  );
+
   const selectedService = services.find(
     (service) => service.id === selectedServiceId,
   );
 
-  const professionalsForSelectedService = professionalOptions.filter(
-    (professional) => professional.serviceId === selectedServiceId,
-  );
-
-  const selectedProfessional = professionalsForSelectedService.find(
+  const selectedProfessional = availableProfessionals.find(
     (professional) => professional.professionalId === selectedProfessionalId,
   );
 
   function handleSelectService(serviceId: string) {
     setSelectedServiceId(serviceId);
     setSelectedSlot(null);
-    setSelectedProfessionalId(null);
+    resetProfessionalStep();
   }
 
   function handleContinueToTimeSlot() {
@@ -84,13 +89,72 @@ export function BookingFlow({
 
   function handleSelectSlot(slot: BookingTimeSlot | null) {
     setSelectedSlot(slot);
-    setSelectedProfessionalId(null);
+    resetProfessionalStep();
   }
 
   function handleBackToService() {
     setCurrentStep("service");
     setSelectedSlot(null);
+    resetProfessionalStep();
+  }
+
+  function resetProfessionalStep() {
     setSelectedProfessionalId(null);
+    setAvailableProfessionals([]);
+    setProfessionalsError(null);
+  }
+
+  async function handleContinueToProfessional() {
+    if (!selectedService || !selectedSlot || isLoadingProfessionals) {
+      return;
+    }
+
+    resetProfessionalStep();
+    setIsLoadingProfessionals(true);
+    setCurrentStep("professional");
+
+    try {
+      const searchParams = new URLSearchParams({
+        serviceId: selectedService.id,
+        startsAt: selectedSlot.startsAt,
+      });
+
+      const response = await fetch(
+        "/api/booking/professionals?" + searchParams.toString(),
+        { cache: "no-store" },
+      );
+
+      const data: BookingProfessionalsResponse = await response.json();
+
+      if (!response.ok) {
+        setProfessionalsError(
+          data.error ?? "Não foi possível consultar os profissionais.",
+        );
+        return;
+      }
+
+      if (!Array.isArray(data.professionals)) {
+        throw new Error("Resposta de profissionais inválida.");
+      }
+
+      setAvailableProfessionals(data.professionals);
+    } catch {
+      setProfessionalsError(
+        "Não foi possível consultar os profissionais. Tente novamente",
+      );
+    } finally {
+      setIsLoadingProfessionals(false);
+    }
+  }
+
+  function handleBackToTimeSlot() {
+    if (isLoadingProfessionals) {
+      return;
+    }
+
+    setCurrentStep("time-slot");
+    setSelectedSlot(null);
+    resetProfessionalStep();
   }
 
   if (services.length === 0) {
@@ -158,24 +222,34 @@ export function BookingFlow({
             </p>
           )}
         </div>
+
+        <button
+          type="button"
+          disabled={!selectedSlot || isLoadingProfessionals}
+          onClick={handleContinueToProfessional}
+          className="mt-6 rounded-xl bg-cyan-400 px-5 py-3 text-sm font-bold text-slate-950 transition hover:bg-cyan-300 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-400"
+        >
+          Continuar
+        </button>
       </section>
     );
   }
 
-  if (currentStep === "professional" && selectedService) {
+  if (currentStep === "professional" && selectedService && selectedSlot) {
     return (
       <section className="mt-10">
         <button
           type="button"
-          onClick={handleBackToService}
+          onClick={handleBackToTimeSlot}
+          disabled={isLoadingProfessionals}
           className="text-sm font-semibold text-cyan-400 transition hover:text-cyan-300"
         >
-          ← Trocar serviço
+          ← Trocar data e horário
         </button>
 
         <div className="mt-6">
           <p className="text-sm font-semibold tracking-[0.2em] text-cyan-400 uppercase">
-            Etapa 2 de 4
+            Etapa 3 de 4
           </p>
 
           <h2 className="mt-3 text-3xl font-bold">Escolha um profissional</h2>
@@ -184,15 +258,34 @@ export function BookingFlow({
             Serviço escolhido:{" "}
             <strong className="text-white">{selectedService.name}</strong>
           </p>
+
+          <p className="mt-2 text-slate-300">
+            Horário escolhido:{" "}
+            <strong className="text-white">
+              {selectedSlot.localStartTime}
+            </strong>
+          </p>
         </div>
 
-        {professionalsForSelectedService.length === 0 ? (
+        {isLoadingProfessionals ? (
+          <p role="status" className="mt-8 text-slate-300">
+            Consultando profissionais disponíveis...
+          </p>
+        ) : professionalsError ? (
+          <p
+            role="alert"
+            className="mt-8 rounded-2xl border border-red-800 bg-red-950/40 p-6 text-red-200"
+          >
+            {professionalsError}
+          </p>
+        ) : availableProfessionals.length === 0 ? (
           <p className="mt-8 rounded-2xl border border-slate-800 bg-slate-900 p-6 text-slate-300">
-            Nenhum profissional está disponível para este serviço.
+            Nenhum profissional está disponível nesse horário. Escolha outra
+            data e horário.
           </p>
         ) : (
           <ul className="mt-8 grid gap-4 md:grid-cols-2">
-            {professionalsForSelectedService.map((professional) => {
+            {availableProfessionals.map((professional) => {
               const isSelected =
                 professional.professionalId === selectedProfessionalId;
 
@@ -234,6 +327,7 @@ export function BookingFlow({
         <div
           aria-live="polite"
           className="mt-6 rounded-2xl border border-slate-800 bg-slate-900 p-5"
+          hidden={availableProfessionals.length === 0}
         >
           {selectedProfessional ? (
             <>
@@ -245,7 +339,8 @@ export function BookingFlow({
               </p>
 
               <p className="mt-2 text-sm text-slate-400">
-                Na próxima etapa você escolherá a data e o horário.
+                Na próxima etapa você informará seus dados para confirmar o
+                agendamento.
               </p>
             </>
           ) : (
