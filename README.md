@@ -106,17 +106,53 @@ Esse comando encerra os containers e preserva o volume com os dados do banco.
 
 ## Verificações de qualidade
 
-```bash
-docker compose run --rm web npm run format:check
-docker compose run --rm web npm run lint
-docker compose run --rm web npm run build
-```
+Execute os comandos na raiz do projeto, com o ambiente de desenvolvimento iniciado.
 
-Para aplicar a formatação:
+### Formatação, lint e TypeScript
 
 ```bash
-docker compose run --rm web npm run format
+docker compose exec -T web npm run format:check
+docker compose exec -T web npm run lint
+docker compose exec -T web npx tsc --noEmit --incremental false
+git diff --check
 ```
+
+Para aplicar a formatação aos arquivos da aplicação web:
+
+```bash
+docker compose exec -T web npm run format
+```
+
+### Build de produção
+
+Os containers compartilham a pasta da aplicação. Pause o servidor de
+desenvolvimento durante o build e reinicie depois:
+
+```bash
+docker compose stop web
+docker compose run --rm --no-deps web npm run build
+docker compose up -d web
+```
+
+Reinicie o serviço web também se o build falhar.
+
+### Testes SQL
+
+Execute no ambiente local de desenvolvimento, com o banco iniciado
+e as quatro migrations aplicadas.
+
+Rode os arquivos sequencialmente, pois utilizam os mesmos identificadores
+para os registros de teste:
+
+```bash
+docker compose exec -T db sh -c 'exec psql -X -U "$POSTGRES_USER" -d "$POSTGRES_DB" -v ON_ERROR_STOP=1' < database/tests/availability_overlap.sql
+
+docker compose exec -T db sh -c 'exec psql -X -U "$POSTGRES_USER" -d "$POSTGRES_DB" -v ON_ERROR_STOP=1' < database/tests/appointments.sql
+```
+
+Os testes verificam restrições de sobreposição e expiração manual.
+Criam registros dentro de uma transação e terminam com rollback.
+Uma restrição que não se comporte como esperado faz o script retornar erro.
 
 ## Estrutura do projeto
 
