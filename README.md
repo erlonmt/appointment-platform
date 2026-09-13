@@ -23,12 +23,11 @@ O projeto está sendo desenvolvido como estudo de uma aplicação SaaS multiempr
 - React
 - TypeScript
 - Tailwind CSS
-- Supabase
-- PostgreSQL
+- PostgreSQL, com acesso pelo pacote pg
 - Docker e Docker Compose
-- ESLint
-- Prettier
-- Playwright e Vitest
+- ESLint e Prettier
+
+Supabase, Vitest e Playwright estão previstos para etapas futuras.
 
 ## Executando localmente
 
@@ -62,24 +61,53 @@ Para aplicar a formatação:
 docker compose run --rm web npm run format
 ```
 
-## Estrutura inicial
+## Estrutura do projeto
 
 ```text
 .
+├── .env.example
 ├── compose.yaml
+├── database
+│   ├── migrations
+│   ├── queries
+│   ├── seeds
+│   └── tests
+├── docs
 ├── README.md
 └── web
     ├── src
     │   ├── app
+    │   │   ├── api
+    │   │   ├── booking
+    │   │   └── dashboard
     │   ├── components
-    │   └── data
+    │   ├── config
+    │   ├── data
+    │   ├── data-access
+    │   └── lib
     └── package.json
 ```
 
+- `app`: páginas e endpoints HTTP.
+- `components`: componentes da interface.
+- `config`: configurações da aplicação.
+- `data`: conteúdo estático.
+- `data-access`: consultas ao banco e transformação dos resultados.
+- `lib`: infraestrutura compartilhada.
+- `database`: migrations, consultas, dados de demonstração e testes SQL.
+- `docs`: documentação do domínio e do esquema relacional.
+
 ## Estado atual
 
-- Ambiente Next.js configurado com Docker.
-- Landing page responsiva.
-- Componentes e dados da landing page separados.
-- Formatação e análise de código configuradas.
-- Modelagem do domínio em andamento.
+- Ambiente Next.js e PostgreSQL configurado com Docker Compose.
+- Landing page responsiva, com componentes e conteúdo separados.
+- Quatro migrations SQL para a estrutura inicial do banco.
+- Dados de demonstração e testes SQL de restrições do banco.
+- Painéis de demonstração para consultar serviços e profissionais.
+- APIs GET para consultar horários e profissionais disponíveis.
+- Disponibilidade considerando duração, intervalo, bloqueios e agendamentos existentes.
+- Fluxo de agendamento: serviço, data e horário, profissional, dados do cliente e revisão.
+- Formatação com Prettier, análise com ESLint e TypeScript estrito.
+
+A gravação de clientes e agendamentos pelo fluxo, a autenticação e a
+autorização multiempresa permanecem como próximas etapas.
