@@ -33,19 +33,76 @@ Supabase, Vitest e Playwright estão previstos para etapas futuras.
 
 É necessário ter Docker e Docker Compose instalados.
 
-Inicie o ambiente:
+Execute os comandos na raiz do projeto, onde está o arquivo compose.yaml.
+
+### Primeira instalação
+
+Siga os passos na ordem, avançando quando cada comando terminar com sucesso.
+
+1. Crie o arquivo de configuração:
 
 ```bash
-docker compose up
+cp -n .env.example .env
 ```
 
-Acesse:
+Abra o arquivo `.env` e configure `POSTGRES_DB`, `POSTGRES_USER`
+e `POSTGRES_PASSWORD`.
 
-```text
-http://localhost:3000
+2. Inicie o banco e aguarde ficar disponível:
+
+```bash
+docker compose up -d --wait db
 ```
 
-Encerre o ambiente com `Ctrl+C`.
+3. Instale as dependências da aplicação:
+
+```bash
+docker compose run --rm --no-deps web npm ci
+```
+
+4. Aplique as migrations em ordem:
+
+```bash
+cat database/migrations/*.sql | docker compose exec -T db sh -c 'exec psql -X -U "$POSTGRES_USER" -d "$POSTGRES_DB" -v ON_ERROR_STOP=1'
+```
+
+Esse passo é para um banco vazio. As migrations atuais são aplicadas
+manualmente e não devem ser reaplicadas ao reiniciar o projeto.
+
+5. Carregue os dados de demonstração:
+
+```bash
+docker compose exec -T db sh -c 'exec psql -X -U "$POSTGRES_USER" -d "$POSTGRES_DB" -v ON_ERROR_STOP=1' < database/seeds/development.sql
+```
+
+6. Inicie a aplicação:
+
+```bash
+docker compose up -d web
+```
+
+### Uso diário
+
+Depois da primeira instalação, inicie o ambiente com:
+
+```bash
+docker compose up -d
+```
+
+### Endereços locais
+
+- [Página inicial](http://localhost:3000)
+- [Agendamento](http://localhost:3000/booking)
+- [Profissionais](http://localhost:3000/dashboard/professionals)
+- [Serviços](http://localhost:3000/dashboard/services)
+
+### Encerrando o ambiente
+
+```bash
+docker compose down
+```
+
+Esse comando encerra os containers e preserva o volume com os dados do banco.
 
 ## Verificações de qualidade
 
