@@ -21,6 +21,15 @@ export const databasePool =
     connectionTimeoutMillis: 5_000,
   });
 
+if (databasePool.listenerCount("error") === 0) {
+  databasePool.on("error", (error) => {
+    console.error("Erro em uma conexão ociosa do banco.", {
+      name: error.name,
+      message: error.message,
+    });
+  });
+}
+
 if (process.env.NODE_ENV !== "production") {
   globalForDatabase.databasePool = databasePool;
 }
