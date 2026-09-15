@@ -5,20 +5,15 @@ import { useState } from "react";
 import { BookingTimeSlotStep } from "./booking-time-slot-step";
 import { BookingCustomerForm } from "./booking-customer-form";
 import { BookingSummary } from "./booking-summary";
+import { BookingServiceStep } from "./booking-service-step";
+import { formatCurrency } from "@/lib/format-currency";
+import type { ServiceSummary } from "@/data-access/services";
 import type { BookingCustomerDetails } from "./booking-customer-form";
 import type { BookingTimeSlot } from "@/data-access/booking-availability";
 
 type ConfirmationMode = "automatic" | "manual";
 type BookingStep =
   "service" | "time-slot" | "professional" | "customer" | "review";
-
-interface BookingServiceOption {
-  id: string;
-  name: string;
-  priceCents: number;
-  durationMinutes: number;
-  bufferMinutes: number;
-}
 
 interface BookingProfessionalOption {
   serviceId: string;
@@ -31,21 +26,12 @@ interface BookingProfessionalOption {
 }
 
 interface BookingFlowProps {
-  services: BookingServiceOption[];
+  services: ServiceSummary[];
 }
 
 interface BookingProfessionalsResponse {
   professionals?: BookingProfessionalOption[];
   error?: string;
-}
-
-const currencyFormatter = new Intl.NumberFormat("pt-BR", {
-  style: "currency",
-  currency: "BRL",
-});
-
-function formatCurrency(valueInCents: number) {
-  return currencyFormatter.format(valueInCents / 100);
 }
 
 export function BookingFlow({ services }: BookingFlowProps) {
@@ -394,73 +380,11 @@ export function BookingFlow({ services }: BookingFlowProps) {
     );
   }
   return (
-    <section className="mt-10">
-      <p className="mb-4 text-sm font-semibold tracking-[0.2em] text-cyan-400 uppercase">
-        Etapa 1 de 4
-      </p>
-
-      <ul className="grid gap-4 md:grid-cols-2">
-        {services.map((service) => {
-          const isSelected = service.id === selectedServiceId;
-
-          return (
-            <li key={service.id}>
-              <button
-                type="button"
-                aria-pressed={isSelected}
-                onClick={() => handleSelectService(service.id)}
-                className={`h-full w-full rounded-2xl border p-6 text-left transition ${
-                  isSelected
-                    ? "border-cyan-400 bg-cyan-950/40"
-                    : "border-slate-800 bg-slate-900 hover:border-slate-700"
-                }`}
-              >
-                <span className="flex items-start justify-between gap-4">
-                  <span className="text-xl font-semibold">{service.name}</span>
-
-                  <span className="font-bold text-cyan-300">
-                    {formatCurrency(service.priceCents)}
-                  </span>
-                </span>
-
-                <span className="mt-4 block text-sm text-slate-300">
-                  Duração: {service.durationMinutes} minutos
-                </span>
-
-                <span className="mt-1 block text-sm text-slate-400">
-                  {service.bufferMinutes > 0
-                    ? `${service.bufferMinutes} minutos de intervalo adicional`
-                    : "Sem intervalo adicional"}
-                </span>
-              </button>
-            </li>
-          );
-        })}
-      </ul>
-
-      <div className="mt-6 flex flex-col gap-4 rounded-2xl border border-slate-800 bg-slate-900 p-5 sm:flex-row sm:items-center sm:justify-between">
-        <div aria-live="polite">
-          {selectedService ? (
-            <p className="text-slate-200">
-              Serviço selecionado:{" "}
-              <strong className="text-white">{selectedService.name}</strong>
-            </p>
-          ) : (
-            <p className="text-slate-400">
-              Selecione um serviço para continuar.
-            </p>
-          )}
-        </div>
-
-        <button
-          type="button"
-          disabled={!selectedService}
-          onClick={handleContinueToTimeSlot}
-          className="rounded-xl bg-cyan-400 px-5 py-3 text-sm font-bold text-slate-950 transition hover:bg-cyan-300 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-400"
-        >
-          Continuar
-        </button>
-      </div>
-    </section>
+    <BookingServiceStep
+      services={services}
+      selectedService={selectedService}
+      onSelectService={handleSelectService}
+      onContinue={handleContinueToTimeSlot}
+    />
   );
 }
