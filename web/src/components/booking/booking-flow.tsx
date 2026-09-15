@@ -3,11 +3,9 @@
 import { useState } from "react";
 
 import { BookingTimeSlotStep } from "./booking-time-slot-step";
-import { BookingCustomerForm } from "./booking-customer-form";
-import { BookingSummary } from "./booking-summary";
+import { BookingCustomerStep } from "./booking-customer-step";
 import { BookingServiceStep } from "./booking-service-step";
 import { BookingProfessionalStep } from "./booking-professional-step";
-import { formatCurrency } from "@/lib/format-currency";
 import type { BookingProfessionalOption } from "@/data-access/booking";
 import type { ServiceSummary } from "@/data-access/services";
 import type { BookingCustomerDetails } from "./booking-customer-form";
@@ -221,47 +219,19 @@ export function BookingFlow({ services }: BookingFlowProps) {
     const isReview = currentStep === "review" && customerDetails !== null;
 
     return (
-      <section className="mt-10">
-        <button
-          type="button"
-          onClick={isReview ? handleBackToCustomer : handleBackToProfessional}
-          className="text-sm font-semibold text-cyan-400 transition hover:text-cyan-300"
-        >
-          {isReview ? "← Editar dados" : "← Trocar profissional"}
-        </button>
-
-        <p className="mt-6 text-sm font-semibold tracking-[0.2em] text-cyan-400 uppercase">
-          Etapa 4 de 4
-        </p>
-
-        <h2 className="mt-3 text-3xl font-bold">
-          {isReview ? "Revise seu agendamento" : "Informe seus dados"}
-        </h2>
-
-        <BookingSummary
-          serviceName={selectedService.name}
-          professionalName={selectedProfessional.professionalName}
-          localDate={selectedSlot.localDate}
-          localStartTime={selectedSlot.localStartTime}
-          priceLabel={formatCurrency(selectedProfessional.priceCents)}
-          durationMinutes={selectedProfessional.durationMinutes}
-          confirmationMode={selectedProfessional.confirmationMode}
-          customerDetails={isReview ? customerDetails : null}
-        />
-
-        {isReview ? (
-          <p role="status" className="mt-6 text-slate-300">
-            Confira os dados acima. O agendamento ainda não foi enviado.
-          </p>
-        ) : (
-          <BookingCustomerForm
-            initialValues={customerDetails}
-            onReview={handleReview}
-          />
-        )}
-      </section>
+      <BookingCustomerStep
+        selectedService={selectedService}
+        selectedSlot={selectedSlot}
+        selectedProfessional={selectedProfessional}
+        customerDetails={customerDetails}
+        isReview={isReview}
+        onBackToCustomer={handleBackToCustomer}
+        onBackToProfessional={handleBackToProfessional}
+        onReview={handleReview}
+      />
     );
   }
+
   return (
     <BookingServiceStep
       services={services}
