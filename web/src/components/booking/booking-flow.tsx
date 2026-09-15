@@ -6,24 +6,15 @@ import { BookingTimeSlotStep } from "./booking-time-slot-step";
 import { BookingCustomerForm } from "./booking-customer-form";
 import { BookingSummary } from "./booking-summary";
 import { BookingServiceStep } from "./booking-service-step";
+import { BookingProfessionalSelection } from "./booking-professional-selection";
 import { formatCurrency } from "@/lib/format-currency";
+import type { BookingProfessionalOption } from "@/data-access/booking";
 import type { ServiceSummary } from "@/data-access/services";
 import type { BookingCustomerDetails } from "./booking-customer-form";
 import type { BookingTimeSlot } from "@/data-access/booking-availability";
 
-type ConfirmationMode = "automatic" | "manual";
 type BookingStep =
   "service" | "time-slot" | "professional" | "customer" | "review";
-
-interface BookingProfessionalOption {
-  serviceId: string;
-  professionalId: string;
-  professionalName: string;
-  confirmationMode: ConfirmationMode;
-  priceCents: number;
-  durationMinutes: number;
-  bufferMinutes: number;
-}
 
 interface BookingFlowProps {
   services: ServiceSummary[];
@@ -234,62 +225,15 @@ export function BookingFlow({ services }: BookingFlowProps) {
           </p>
         </div>
 
-        {isLoadingProfessionals ? (
-          <p role="status" className="mt-8 text-slate-300">
-            Consultando profissionais disponíveis...
-          </p>
-        ) : professionalsError ? (
-          <p
-            role="alert"
-            className="mt-8 rounded-2xl border border-red-800 bg-red-950/40 p-6 text-red-200"
-          >
-            {professionalsError}
-          </p>
-        ) : availableProfessionals.length === 0 ? (
-          <p className="mt-8 rounded-2xl border border-slate-800 bg-slate-900 p-6 text-slate-300">
-            Nenhum profissional está disponível nesse horário. Escolha outra
-            data e horário.
-          </p>
-        ) : (
-          <ul className="mt-8 grid gap-4 md:grid-cols-2">
-            {availableProfessionals.map((professional) => {
-              const isSelected =
-                professional.professionalId === selectedProfessionalId;
-
-              return (
-                <li key={professional.professionalId}>
-                  <button
-                    type="button"
-                    aria-pressed={isSelected}
-                    onClick={() =>
-                      setSelectedProfessionalId(professional.professionalId)
-                    }
-                    className={`h-full w-full rounded-2xl border p-6 text-left transition ${
-                      isSelected
-                        ? "border-cyan-400 bg-cyan-950/40"
-                        : "border-slate-800 bg-slate-900 hover:border-slate-700"
-                    }`}
-                  >
-                    <span className="block text-xl font-semibold">
-                      {professional.professionalName}
-                    </span>
-
-                    <span className="mt-2 block text-sm text-cyan-300">
-                      {professional.confirmationMode === "automatic"
-                        ? "Confirmação automática"
-                        : "Necessita aprovação"}
-                    </span>
-
-                    <span className="mt-4 block text-sm text-slate-300">
-                      {formatCurrency(professional.priceCents)} ·{" "}
-                      {professional.durationMinutes} minutos
-                    </span>
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
-        )}
+        <BookingProfessionalSelection
+          isLoadingProfessionals={isLoadingProfessionals}
+          professionalsError={professionalsError}
+          availableProfessionals={availableProfessionals}
+          selectedProfessionalId={selectedProfessionalId}
+          onSelectProfessional={(professionalId) =>
+            setSelectedProfessionalId(professionalId)
+          }
+        />
 
         <div
           aria-live="polite"
