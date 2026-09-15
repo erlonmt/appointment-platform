@@ -4,6 +4,7 @@ import { useState } from "react";
 
 import { BookingTimeSlotSelection } from "./booking-time-slot-selection";
 import { BookingCustomerForm } from "./booking-customer-form";
+import { BookingSummary } from "./booking-summary";
 import type { BookingCustomerDetails } from "./booking-customer-form";
 import type { BookingTimeSlot } from "@/data-access/booking-availability";
 
@@ -424,71 +425,16 @@ export function BookingFlow({ services }: BookingFlowProps) {
           {isReview ? "Revise seu agendamento" : "Informe seus dados"}
         </h2>
 
-        <dl className="mt-8 space-y-4 rounded-2xl border border-slate-800 bg-slate-900 p-6">
-          <div>
-            <dt className="text-sm text-slate-400">Serviço</dt>
-            <dd className="mt-1 font-semibold">{selectedService.name}</dd>
-          </div>
-
-          <div>
-            <dt className="text-sm text-slate-400">Profissional</dt>
-            <dd className="mt-1 font-semibold">
-              {selectedProfessional.professionalName}
-            </dd>
-          </div>
-
-          <div>
-            <dt className="text-sm text-slate-400">Data e horário</dt>
-            <dd className="mt-1 font-semibold">
-              {selectedSlot.localDate.split("-").reverse().join("/")} às{" "}
-              {selectedSlot.localStartTime}
-            </dd>
-          </div>
-
-          <div>
-            <dt className="text-sm text-slate-400">Valor</dt>
-            <dd className="mt-1 font-semibold">
-              {formatCurrency(selectedProfessional.priceCents)}
-            </dd>
-          </div>
-
-          <div>
-            <dt className="text-sm text-slate-400">Duração</dt>
-            <dd className="mt-1 font-semibold">
-              {selectedProfessional.durationMinutes} minutos
-            </dd>
-          </div>
-
-          <div>
-            <dt className="text-sm text-slate-400">Confirmação</dt>
-            <dd className="mt-1 font-semibold">
-              {selectedProfessional.confirmationMode === "automatic"
-                ? "Automática"
-                : "Depende da aprovação do profissional"}
-            </dd>
-          </div>
-
-          {isReview && customerDetails && (
-            <>
-              <div>
-                <dt className="text-sm text-slate-400">Nome</dt>
-                <dd className="mt-1 font-semibold">{customerDetails.name}</dd>
-              </div>
-
-              <div>
-                <dt className="text-sm text-slate-400">Telefone</dt>
-                <dd className="mt-1 font-semibold">{customerDetails.phone}</dd>
-              </div>
-
-              <div>
-                <dt className="text-sm text-slate-400">E-mail</dt>
-                <dd className="mt-1 font-semibold">
-                  {customerDetails.email ?? "Não informado"}
-                </dd>
-              </div>
-            </>
-          )}
-        </dl>
+        <BookingSummary
+          serviceName={selectedService.name}
+          professionalName={selectedProfessional.professionalName}
+          localDate={selectedSlot.localDate}
+          localStartTime={selectedSlot.localStartTime}
+          priceLabel={formatCurrency(selectedProfessional.priceCents)}
+          durationMinutes={selectedProfessional.durationMinutes}
+          confirmationMode={selectedProfessional.confirmationMode}
+          customerDetails={isReview ? customerDetails : null}
+        />
 
         {isReview ? (
           <p role="status" className="mt-6 text-slate-300">
