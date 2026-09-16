@@ -1,5 +1,5 @@
 import { BookingProfessionalSelection } from "./booking-professional-selection";
-import type { BookingProfessionalOption } from "@/data-access/booking";
+import type { BookingProfessionalOption } from "@/contracts/booking";
 
 interface BookingProfessionalStepProps {
   serviceName: string;

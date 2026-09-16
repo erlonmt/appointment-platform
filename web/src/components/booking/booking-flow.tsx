@@ -6,10 +6,12 @@ import { BookingTimeSlotStep } from "./booking-time-slot-step";
 import { BookingCustomerStep } from "./booking-customer-step";
 import { BookingServiceStep } from "./booking-service-step";
 import { BookingProfessionalStep } from "./booking-professional-step";
-import type { BookingProfessionalOption } from "@/data-access/booking";
 import type { ServiceSummary } from "@/data-access/services";
 import type { BookingCustomerDetails } from "./booking-customer-form";
-import type { BookingTimeSlot } from "@/contracts/booking";
+import type {
+  BookingProfessionalOption,
+  BookingTimeSlot,
+} from "@/contracts/booking";
 
 type BookingStep =
   "service" | "time-slot" | "professional" | "customer" | "review";

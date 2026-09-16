@@ -1,19 +1,9 @@
 import "server-only";
 
 import type { QueryResultRow } from "pg";
-
+import type { BookingProfessionalOption } from "@/contracts/booking";
 import type { ConfirmationMode } from "@/contracts/professionals";
 import { databasePool } from "@/lib/database";
-
-export interface BookingProfessionalOption {
-  serviceId: string;
-  professionalId: string;
-  professionalName: string;
-  confirmationMode: ConfirmationMode;
-  priceCents: number;
-  durationMinutes: number;
-  bufferMinutes: number;
-}
 
 interface BookingProfessionalOptionRow extends QueryResultRow {
   service_id: string;

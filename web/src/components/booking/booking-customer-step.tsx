@@ -2,8 +2,10 @@ import { BookingCustomerForm } from "./booking-customer-form";
 import { BookingSummary } from "./booking-summary";
 import { formatCurrency } from "@/lib/format-currency";
 import type { BookingCustomerDetails } from "./booking-customer-form";
-import type { BookingProfessionalOption } from "@/data-access/booking";
-import type { BookingTimeSlot } from "@/contracts/booking";
+import type {
+  BookingProfessionalOption,
+  BookingTimeSlot,
+} from "@/contracts/booking";
 import type { ServiceSummary } from "@/data-access/services";
 
 interface BookingCustomerStepProps {

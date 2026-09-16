@@ -1,4 +1,4 @@
-import type { BookingProfessionalOption } from "@/data-access/booking";
+import type { BookingProfessionalOption } from "@/contracts/booking";
 import { formatCurrency } from "@/lib/format-currency";
 
 interface BookingProfessionalSelectionProps {
