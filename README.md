@@ -111,11 +111,11 @@ Execute os comandos na raiz do projeto, com o ambiente de desenvolvimento inicia
 ### Formatação, lint e TypeScript
 
 ```bash
-docker compose exec -T web npm run format:check
-docker compose exec -T web npm run lint
-docker compose exec -T web npx tsc --noEmit --incremental false
+docker compose exec -T web npm run check
 git diff --check
 ```
+
+O script `check` executa formatação, lint e TypeScript nessa ordem.
 
 Para aplicar a formatação aos arquivos da aplicação web:
 
