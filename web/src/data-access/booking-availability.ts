@@ -2,14 +2,9 @@ import "server-only";
 
 import type { QueryResultRow } from "pg";
 
-import { databasePool } from "@/lib/database";
+import type { BookingTimeSlot } from "@/contracts/booking";
 
-export interface BookingTimeSlot {
-  startsAt: string;
-  localDate: string;
-  localStartTime: string;
-  availableProfessionals: number;
-}
+import { databasePool } from "@/lib/database";
 
 interface BookingTimeSlotRow extends QueryResultRow {
   starts_at: Date;

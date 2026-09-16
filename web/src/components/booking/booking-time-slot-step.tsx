@@ -1,5 +1,5 @@
 import { BookingTimeSlotSelection } from "./booking-time-slot-selection";
-import type { BookingTimeSlot } from "@/data-access/booking-availability";
+import type { BookingTimeSlot } from "@/contracts/booking";
 
 interface BookingTimeSlotStepProps {
   serviceId: string;

@@ -9,7 +9,7 @@ import { BookingProfessionalStep } from "./booking-professional-step";
 import type { BookingProfessionalOption } from "@/data-access/booking";
 import type { ServiceSummary } from "@/data-access/services";
 import type { BookingCustomerDetails } from "./booking-customer-form";
-import type { BookingTimeSlot } from "@/data-access/booking-availability";
+import type { BookingTimeSlot } from "@/contracts/booking";
 
 type BookingStep =
   "service" | "time-slot" | "professional" | "customer" | "review";

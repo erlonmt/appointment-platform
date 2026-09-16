@@ -174,6 +174,7 @@ Uma restrição que não se comporte como esperado faz o script retornar erro.
     │   │   ├── booking
     │   │   └── dashboard
     │   ├── components
+    │   ├── contracts
     │   ├── config
     │   ├── data
     │   ├── data-access
@@ -183,6 +184,7 @@ Uma restrição que não se comporte como esperado faz o script retornar erro.
 
 - `app`: páginas e endpoints HTTP.
 - `components`: componentes da interface.
+- `contracts`: tipos de dados compartilhados entre consultas, APIs e interface.
 - `config`: configurações da aplicação.
 - `data`: conteúdo estático.
 - `data-access`: consultas ao banco e transformação dos resultados.

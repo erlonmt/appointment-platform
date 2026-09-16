@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import type { BookingTimeSlot } from "@/data-access/booking-availability";
+import type { BookingTimeSlot } from "@/contracts/booking";
 
 interface BookingTimeSlotSelectionProps {
   serviceId: string;
