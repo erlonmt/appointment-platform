@@ -2,7 +2,7 @@ import "server-only";
 
 import type { QueryResultRow } from "pg";
 
-import type { ConfirmationMode } from "@/data-access/professionals";
+import type { ConfirmationMode } from "@/contracts/professionals";
 import { databasePool } from "@/lib/database";
 
 export interface BookingProfessionalOption {

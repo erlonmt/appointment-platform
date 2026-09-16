@@ -4,14 +4,10 @@ import type { QueryResultRow } from "pg";
 
 import { databasePool } from "@/lib/database";
 
-export type ConfirmationMode = "automatic" | "manual";
-
-export interface ProfessionalSummary {
-  id: string;
-  name: string;
-  confirmationMode: ConfirmationMode;
-  services: string[];
-}
+import type {
+  ConfirmationMode,
+  ProfessionalSummary,
+} from "@/contracts/professionals";
 
 interface ProfessionalRow extends QueryResultRow {
   id: string;

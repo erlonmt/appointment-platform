@@ -1,4 +1,4 @@
-import type { ProfessionalSummary } from "@/data-access/professionals";
+import type { ProfessionalSummary } from "@/contracts/professionals";
 
 interface ProfessionalCardProps {
   professional: ProfessionalSummary;
