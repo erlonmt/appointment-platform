@@ -10,7 +10,8 @@
     "format": "prettier . --write",
     "format:check": "prettier . --check",
     "typecheck": "tsc --noEmit --incremental false",
-    "check": "npm run format:check && npm run lint && npm run typecheck"
+    "check": "npm run format:check && npm run lint && npm run typecheck",
+    "test:api": "node --test tests/booking-api.test.mjs"
   },
   "dependencies": {
     "next": "16.3.3",

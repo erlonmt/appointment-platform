@@ -123,6 +123,16 @@ Para aplicar a formatação aos arquivos da aplicação web:
 docker compose exec -T web npm run format
 ```
 
+### Teste das APIs de agendamento
+
+Com `web` e `db` ativos e os dados de demonstração carregados:
+
+```bash
+docker compose exec -T web npm run test:api
+```
+
+O teste faz apenas consultas GET e compara a contagem de profissionais com a lista retornada para alguns horários.
+
 ### Build de produção
 
 Os containers compartilham a pasta da aplicação. Pause o servidor de
