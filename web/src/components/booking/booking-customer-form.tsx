@@ -2,12 +2,7 @@
 
 import { useState } from "react";
 import type { SubmitEvent } from "react";
-
-export interface BookingCustomerDetails {
-  name: string;
-  phone: string;
-  email: string | null;
-}
+import type { BookingCustomerDetails } from "@/contracts/booking";
 
 interface BookingCustomerFormProps {
   initialValues?: BookingCustomerDetails | null;

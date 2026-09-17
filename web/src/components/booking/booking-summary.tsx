@@ -1,4 +1,4 @@
-import type { BookingCustomerDetails } from "./booking-customer-form";
+import type { BookingCustomerDetails } from "@/contracts/booking";
 
 interface BookingSummaryProps {
   serviceName: string;

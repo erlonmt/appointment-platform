@@ -1,8 +1,8 @@
 import { BookingCustomerForm } from "./booking-customer-form";
 import { BookingSummary } from "./booking-summary";
 import { formatCurrency } from "@/lib/format-currency";
-import type { BookingCustomerDetails } from "./booking-customer-form";
 import type {
+  BookingCustomerDetails,
   BookingProfessionalOption,
   BookingTimeSlot,
 } from "@/contracts/booking";

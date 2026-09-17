@@ -16,3 +16,9 @@ export interface BookingProfessionalOption {
   durationMinutes: number;
   bufferMinutes: number;
 }
+
+export interface BookingCustomerDetails {
+  name: string;
+  phone: string;
+  email: string | null;
+}
