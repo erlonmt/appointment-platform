@@ -59,6 +59,7 @@ export async function listBookingTimeSlotsByUnit(
           and ar.weekday = extract(dow from $4::date)
           and ar.active = true
           and p.active = true
+          and p.confirmation_mode = 'automatic'
           and pu.active = true
           and ps.active = true
           and s.active = true

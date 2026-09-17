@@ -49,6 +49,11 @@ test("availability counts match professional lists", async () => {
     });
 
     assert.ok(Array.isArray(result.professionals));
+    assert.ok(
+      result.professionals.every(
+        (professional) => professional.confirmationMode === "automatic",
+      ),
+    );
     assert.equal(
       slot.availableProfessionals,
       result.professionals.length,

@@ -64,6 +64,7 @@ export async function listBookingProfessionalOptionsByUnit(
         and professional_services.active = true
         and professional_units.active = true
         and professionals.active = true
+        and professionals.confirmation_mode = 'automatic'
         and services.active = true
         and units.active = true
         and organizations.active = true
@@ -146,6 +147,7 @@ export async function listAvailableBookingProfessionalsByUnit(
           and ar.weekday = extract(dow from c.local_date)
           and ar.active = true
           and p.active = true
+          and p.confirmation_mode = 'automatic'
           and pu.active = true
           and ps.active = true
           and s.active = true
