@@ -2,6 +2,7 @@ import type { NextRequest } from "next/server";
 
 import { DEMO_ORGANIZATION_ID, DEMO_UNIT_ID } from "@/config/demo";
 import { listBookingTimeSlotsByUnit } from "@/data-access/booking-availability";
+import { isValidUuid } from "@/lib/booking-validation";
 import type { BookingAvailabilityResponse } from "@/contracts/booking";
 
 export const runtime = "nodejs";
@@ -9,9 +10,6 @@ export const runtime = "nodejs";
 const responseHeaders = {
   "Cache-Control": "no-store",
 };
-
-const uuidPattern =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 function isValidDate(value: string | null): value is string {
   if (
@@ -34,7 +32,7 @@ export async function GET(request: NextRequest) {
   const serviceId = request.nextUrl.searchParams.get("serviceId");
   const date = request.nextUrl.searchParams.get("date");
 
-  if (!serviceId || !uuidPattern.test(serviceId)) {
+  if (!isValidUuid(serviceId)) {
     return Response.json(
       {
         error: "Informe um serviço válido.",
