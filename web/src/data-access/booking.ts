@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { QueryResultRow } from "pg";
+import type { PoolClient, QueryResultRow } from "pg";
 import type { BookingProfessionalOption } from "@/contracts/booking";
 import type { ConfirmationMode } from "@/contracts/professionals";
 import { databasePool } from "@/lib/database";
@@ -92,8 +92,9 @@ export async function listAvailableBookingProfessionalsByUnit(
   unitId: string,
   serviceId: string,
   startsAt: string,
+  queryExecutor: Pick<PoolClient, "query"> = databasePool,
 ): Promise<BookingProfessionalOption[]> {
-  const result = await databasePool.query<BookingProfessionalOptionRow>(
+  const result = await queryExecutor.query<BookingProfessionalOptionRow>(
     `
       with context as (
         select
