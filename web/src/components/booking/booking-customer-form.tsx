@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { parseBookingCustomerDetails } from "@/lib/booking-validation";
 import type { SubmitEvent } from "react";
 import type { BookingCustomerDetails } from "@/contracts/booking";
 
@@ -20,21 +21,18 @@ export function BookingCustomerForm({
     setError(null);
 
     const formData = new FormData(event.currentTarget);
+    const customer = parseBookingCustomerDetails({
+      name: formData.get("name"),
+      phone: formData.get("phone"),
+      email: formData.get("email"),
+    });
 
-    const name = String(formData.get("name") ?? "").trim();
-    const phone = String(formData.get("phone") ?? "").trim();
-    const email = String(formData.get("email") ?? "").trim();
-
-    if (!name || !phone) {
-      setError("Informe seu nome e telefone.");
+    if (!customer) {
+      setError("Confira o nome, o telefone e o e-mail informado.");
       return;
     }
 
-    onReview({
-      name,
-      phone,
-      email: email || null,
-    });
+    onReview(customer);
   }
 
   return (
@@ -55,6 +53,7 @@ export function BookingCustomerForm({
           id="booking-customer-name"
           name="name"
           type="text"
+          maxLength={120}
           autoComplete="name"
           required
           defaultValue={initialValues?.name ?? ""}
@@ -74,6 +73,7 @@ export function BookingCustomerForm({
           id="booking-customer-phone"
           name="phone"
           type="tel"
+          maxLength={30}
           autoComplete="tel"
           required
           defaultValue={initialValues?.phone ?? ""}
@@ -93,6 +93,7 @@ export function BookingCustomerForm({
           id="booking-customer-email"
           name="email"
           type="email"
+          maxLength={254}
           autoComplete="email"
           defaultValue={initialValues?.email ?? ""}
           className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none focus:border-cyan-400"

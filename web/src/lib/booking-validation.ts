@@ -1,3 +1,7 @@
+import type { BookingCustomerDetails } from "@/contracts/booking";
+
+const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 const uuidPattern =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -18,4 +22,42 @@ export function isValidStartsAt(value: string | null): value is string {
     !Number.isNaN(parsedStartsAt.getTime()) &&
     parsedStartsAt.toISOString() === value
   );
+}
+
+export function parseBookingCustomerDetails(
+  value: unknown,
+): BookingCustomerDetails | null {
+  if (typeof value !== "object" || value === null || Array.isArray(value)) {
+    return null;
+  }
+
+  const customer = value as Record<string, unknown>;
+  const rawEmail = customer.email;
+
+  if (
+    typeof customer.name !== "string" ||
+    typeof customer.phone !== "string" ||
+    (rawEmail !== null &&
+      rawEmail !== undefined &&
+      typeof rawEmail !== "string")
+  ) {
+    return null;
+  }
+
+  const name = customer.name.trim();
+  const phone = customer.phone.trim();
+  const email = typeof rawEmail === "string" ? rawEmail.trim() : "";
+
+  if (
+    !name ||
+    name.length > 120 ||
+    !phone ||
+    phone.length > 30 ||
+    email.length > 254 ||
+    (email !== "" && !emailPattern.test(email))
+  ) {
+    return null;
+  }
+
+  return { name, phone, email: email || null };
 }
