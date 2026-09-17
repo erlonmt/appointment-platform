@@ -1,4 +1,7 @@
-import type { BookingCustomerDetails } from "@/contracts/booking";
+import type {
+  CreateBookingRequest,
+  BookingCustomerDetails,
+} from "@/contracts/booking";
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -60,4 +63,53 @@ export function parseBookingCustomerDetails(
   }
 
   return { name, phone, email: email || null };
+}
+
+export function parseCreateBookingRequest(
+  value: unknown,
+): CreateBookingRequest | null {
+  if (typeof value !== "object" || value === null || Array.isArray(value)) {
+    return null;
+  }
+
+  const input = value as Record<string, unknown>;
+  const {
+    serviceId,
+    professionalId,
+    startsAt,
+    quotedPriceCents,
+    quotedDurationMinutes,
+  } = input;
+
+  if (
+    typeof serviceId !== "string" ||
+    !isValidUuid(serviceId) ||
+    typeof professionalId !== "string" ||
+    !isValidUuid(professionalId) ||
+    typeof startsAt !== "string" ||
+    !isValidStartsAt(startsAt) ||
+    typeof quotedPriceCents !== "number" ||
+    !Number.isSafeInteger(quotedPriceCents) ||
+    quotedPriceCents < 0 ||
+    typeof quotedDurationMinutes !== "number" ||
+    !Number.isSafeInteger(quotedDurationMinutes) ||
+    quotedDurationMinutes <= 0
+  ) {
+    return null;
+  }
+
+  const customer = parseBookingCustomerDetails(input.customer);
+
+  if (!customer) {
+    return null;
+  }
+
+  return {
+    serviceId,
+    professionalId,
+    startsAt,
+    customer,
+    quotedPriceCents,
+    quotedDurationMinutes,
+  };
 }

@@ -23,6 +23,15 @@ export interface BookingCustomerDetails {
   email: string | null;
 }
 
+export interface CreateBookingRequest {
+  serviceId: string;
+  professionalId: string;
+  startsAt: string;
+  customer: BookingCustomerDetails;
+  quotedPriceCents: number;
+  quotedDurationMinutes: number;
+}
+
 export type BookingAvailabilityResponse =
   | { slots: BookingTimeSlot[]; error?: never }
   | { error: string; slots?: never };
