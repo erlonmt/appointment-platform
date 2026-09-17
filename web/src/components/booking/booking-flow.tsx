@@ -11,6 +11,7 @@ import type {
   BookingCustomerDetails,
   BookingProfessionalOption,
   BookingTimeSlot,
+  BookingProfessionalsResponse,
 } from "@/contracts/booking";
 
 type BookingStep =
@@ -18,11 +19,6 @@ type BookingStep =
 
 interface BookingFlowProps {
   services: ServiceSummary[];
-}
-
-interface BookingProfessionalsResponse {
-  professionals?: BookingProfessionalOption[];
-  error?: string;
 }
 
 export function BookingFlow({ services }: BookingFlowProps) {

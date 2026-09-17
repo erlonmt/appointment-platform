@@ -2,6 +2,7 @@ import type { NextRequest } from "next/server";
 
 import { DEMO_ORGANIZATION_ID, DEMO_UNIT_ID } from "@/config/demo";
 import { listAvailableBookingProfessionalsByUnit } from "@/data-access/booking";
+import type { BookingProfessionalsResponse } from "@/contracts/booking";
 
 export const runtime = "nodejs";
 
@@ -33,14 +34,18 @@ export async function GET(request: NextRequest) {
 
   if (!serviceId || !uuidPattern.test(serviceId)) {
     return Response.json(
-      { error: "Informe um serviço válido." },
+      {
+        error: "Informe um serviço válido.",
+      } satisfies BookingProfessionalsResponse,
       { status: 400, headers: responseHeaders },
     );
   }
 
   if (!isValidStartsAt(startsAt)) {
     return Response.json(
-      { error: "Informe um horário válido." },
+      {
+        error: "Informe um horário válido.",
+      } satisfies BookingProfessionalsResponse,
       { status: 400, headers: responseHeaders },
     );
   }
@@ -53,14 +58,17 @@ export async function GET(request: NextRequest) {
       startsAt,
     );
 
-    return Response.json({ professionals }, { headers: responseHeaders });
+    return Response.json(
+      { professionals } satisfies BookingProfessionalsResponse,
+      { headers: responseHeaders },
+    );
   } catch (error) {
     console.error("Falha ao consultar profissionais disponíveis.", error);
 
     return Response.json(
       {
         error: "Não foi possível consultar os profissionais. Tente novamente.",
-      },
+      } satisfies BookingProfessionalsResponse,
       { status: 500, headers: responseHeaders },
     );
   }

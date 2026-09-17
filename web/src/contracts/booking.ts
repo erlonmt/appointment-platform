@@ -26,3 +26,7 @@ export interface BookingCustomerDetails {
 export type BookingAvailabilityResponse =
   | { slots: BookingTimeSlot[]; error?: never }
   | { error: string; slots?: never };
+
+export type BookingProfessionalsResponse =
+  | { professionals: BookingProfessionalOption[]; error?: never }
+  | { error: string; professionals?: never };
