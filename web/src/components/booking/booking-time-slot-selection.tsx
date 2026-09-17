@@ -2,17 +2,15 @@
 
 import { useState } from "react";
 
-import type { BookingTimeSlot } from "@/contracts/booking";
+import type {
+  BookingAvailabilityResponse,
+  BookingTimeSlot,
+} from "@/contracts/booking";
 
 interface BookingTimeSlotSelectionProps {
   serviceId: string;
   selectedSlot: BookingTimeSlot | null;
   onSelectSlot: (slot: BookingTimeSlot | null) => void;
-}
-
-interface BookingAvailabilityResponse {
-  slots?: BookingTimeSlot[];
-  error?: string;
 }
 
 export function BookingTimeSlotSelection({

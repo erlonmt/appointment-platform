@@ -22,3 +22,7 @@ export interface BookingCustomerDetails {
   phone: string;
   email: string | null;
 }
+
+export type BookingAvailabilityResponse =
+  | { slots: BookingTimeSlot[]; error?: never }
+  | { error: string; slots?: never };
