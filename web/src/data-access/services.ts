@@ -1,16 +1,9 @@
 import "server-only";
 
 import type { QueryResultRow } from "pg";
+import type { ServiceSummary } from "@/contracts/services";
 
 import { databasePool } from "@/lib/database";
-
-export interface ServiceSummary {
-  id: string;
-  name: string;
-  priceCents: number;
-  durationMinutes: number;
-  bufferMinutes: number;
-}
 
 interface ServiceRow extends QueryResultRow {
   id: string;

@@ -6,7 +6,7 @@ import { BookingTimeSlotStep } from "./booking-time-slot-step";
 import { BookingCustomerStep } from "./booking-customer-step";
 import { BookingServiceStep } from "./booking-service-step";
 import { BookingProfessionalStep } from "./booking-professional-step";
-import type { ServiceSummary } from "@/data-access/services";
+import type { ServiceSummary } from "@/contracts/services";
 import type { BookingCustomerDetails } from "./booking-customer-form";
 import type {
   BookingProfessionalOption,

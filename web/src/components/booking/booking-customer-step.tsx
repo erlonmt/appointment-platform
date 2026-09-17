@@ -6,7 +6,7 @@ import type {
   BookingProfessionalOption,
   BookingTimeSlot,
 } from "@/contracts/booking";
-import type { ServiceSummary } from "@/data-access/services";
+import type { ServiceSummary } from "@/contracts/services";
 
 interface BookingCustomerStepProps {
   selectedService: ServiceSummary;

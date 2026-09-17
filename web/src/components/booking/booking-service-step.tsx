@@ -1,4 +1,4 @@
-import type { ServiceSummary } from "@/data-access/services";
+import type { ServiceSummary } from "@/contracts/services";
 import { formatCurrency } from "@/lib/format-currency";
 
 interface BookingServiceStepProps {
