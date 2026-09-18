@@ -16,7 +16,9 @@ interface ServiceRow extends QueryResultRow {
 type ConflictKind = "unavailable" | "details_changed";
 
 export type AutomaticBookingResult =
-  { kind: "created"; appointmentId: string } | { kind: ConflictKind };
+  | { kind: "created"; appointmentId: string }
+  | { kind: "unavailable" }
+  | { kind: "details_changed" };
 
 class BookingConflict extends Error {
   constructor(readonly kind: ConflictKind) {
