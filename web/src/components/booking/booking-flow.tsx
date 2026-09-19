@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import { BookingTimeSlotStep } from "./booking-time-slot-step";
 import { BookingCustomerStep } from "./booking-customer-step";
@@ -12,6 +12,8 @@ import type {
   BookingProfessionalOption,
   BookingTimeSlot,
   BookingProfessionalsResponse,
+  CreateBookingRequest,
+  CreateBookingResponse,
 } from "@/contracts/booking";
 
 type BookingStep =
@@ -44,6 +46,15 @@ export function BookingFlow({ services }: BookingFlowProps) {
 
   const [customerDetails, setCustomerDetails] =
     useState<BookingCustomerDetails | null>(null);
+
+  const bookingRequestInFlight = useRef(false);
+  const [isSubmittingBooking, setIsSubmittingBooking] = useState(false);
+  const [bookingSubmissionError, setBookingSubmissionError] = useState<
+    string | null
+  >(null);
+  const [confirmedAppointmentId, setConfirmedAppointmentId] = useState<
+    string | null
+  >(null);
 
   const selectedService = services.find(
     (service) => service.id === selectedServiceId,
@@ -156,6 +167,7 @@ export function BookingFlow({ services }: BookingFlowProps) {
     }
 
     setCustomerDetails(customer);
+    setBookingSubmissionError(null);
     setCurrentStep("review");
   }
 
@@ -164,7 +176,70 @@ export function BookingFlow({ services }: BookingFlowProps) {
   }
 
   function handleBackToCustomer() {
+    if (isSubmittingBooking) {
+      return;
+    }
+
+    setBookingSubmissionError(null);
     setCurrentStep("customer");
+  }
+
+  async function handleConfirmBooking() {
+    if (
+      !selectedService ||
+      !selectedSlot ||
+      !selectedProfessional ||
+      !customerDetails ||
+      bookingRequestInFlight.current ||
+      confirmedAppointmentId
+    ) {
+      return;
+    }
+
+    bookingRequestInFlight.current = true;
+    setIsSubmittingBooking(true);
+    setBookingSubmissionError(null);
+
+    const bookingRequest = {
+      serviceId: selectedService.id,
+      professionalId: selectedProfessional.professionalId,
+      startsAt: selectedSlot.startsAt,
+      customer: customerDetails,
+      quotedPriceCents: selectedProfessional.priceCents,
+      quotedDurationMinutes: selectedProfessional.durationMinutes,
+    } satisfies CreateBookingRequest;
+
+    try {
+      const response = await fetch("/api/booking", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(bookingRequest),
+      });
+
+      const data: CreateBookingResponse = await response.json();
+
+      if (!response.ok) {
+        setBookingSubmissionError(
+          data.error ?? "Não foi possível confirmar o agendamento.",
+        );
+        return;
+      }
+
+      if (!data.appointmentId || data.status !== "confirmed") {
+        throw new Error("Resposta de confirmação inválida.");
+      }
+
+      setConfirmedAppointmentId(data.appointmentId);
+    } catch {
+      setBookingSubmissionError(
+        "Não foi possível confirmar o agendamento. Tente novamente.",
+      );
+    } finally {
+      bookingRequestInFlight.current = false;
+      setIsSubmittingBooking(false);
+    }
   }
 
   if (services.length === 0) {
@@ -226,6 +301,10 @@ export function BookingFlow({ services }: BookingFlowProps) {
         onBackToCustomer={handleBackToCustomer}
         onBackToProfessional={handleBackToProfessional}
         onReview={handleReview}
+        isSubmittingBooking={isSubmittingBooking}
+        bookingSubmissionError={bookingSubmissionError}
+        confirmedAppointmentId={confirmedAppointmentId}
+        onConfirmBooking={handleConfirmBooking}
       />
     );
   }
