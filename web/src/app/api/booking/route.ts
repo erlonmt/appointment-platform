@@ -16,7 +16,10 @@ export async function POST(request: Request) {
     body = await request.json();
   } catch {
     return Response.json(
-      { error: "Envie um JSON válido." } satisfies CreateBookingResponse,
+      {
+        error: "Envie um JSON válido.",
+        code: "INVALID_REQUEST",
+      } satisfies CreateBookingResponse,
       { status: 400, headers: responseHeaders },
     );
   }
@@ -27,6 +30,7 @@ export async function POST(request: Request) {
     return Response.json(
       {
         error: "Informe dados válidos para o agendamento.",
+        code: "INVALID_REQUEST",
       } satisfies CreateBookingResponse,
       { status: 400, headers: responseHeaders },
     );
@@ -43,6 +47,7 @@ export async function POST(request: Request) {
       return Response.json(
         {
           error: "Este horário não está mais disponível. Escolha outro.",
+          code: "SLOT_UNAVAILABLE",
         } satisfies CreateBookingResponse,
         { status: 409, headers: responseHeaders },
       );
@@ -52,6 +57,7 @@ export async function POST(request: Request) {
       return Response.json(
         {
           error: "O preço ou a duração mudou. Revise o agendamento.",
+          code: "BOOKING_DETAILS_CHANGED",
         } satisfies CreateBookingResponse,
         { status: 409, headers: responseHeaders },
       );
@@ -70,6 +76,7 @@ export async function POST(request: Request) {
     return Response.json(
       {
         error: "Não foi possível confirmar o agendamento. Tente novamente.",
+        code: "INTERNAL_ERROR",
       } satisfies CreateBookingResponse,
       { status: 500, headers: responseHeaders },
     );

@@ -40,6 +40,22 @@ export type BookingProfessionalsResponse =
   | { professionals: BookingProfessionalOption[]; error?: never }
   | { error: string; professionals?: never };
 
+export type CreateBookingErrorCode =
+  | "INVALID_REQUEST"
+  | "SLOT_UNAVAILABLE"
+  | "BOOKING_DETAILS_CHANGED"
+  | "INTERNAL_ERROR";
+
 export type CreateBookingResponse =
-  | { appointmentId: string; status: "confirmed"; error?: never }
-  | { error: string; appointmentId?: never; status?: never };
+  | {
+      appointmentId: string;
+      status: "confirmed";
+      error?: never;
+      code?: never;
+    }
+  | {
+      error: string;
+      code: CreateBookingErrorCode;
+      appointmentId?: never;
+      status?: never;
+    };
