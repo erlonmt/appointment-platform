@@ -6,6 +6,7 @@ interface BookingProfessionalStepProps {
   localStartTime: string;
   isLoadingProfessionals: boolean;
   professionalsError: string | null;
+  professionalNotice: string | null;
   availableProfessionals: BookingProfessionalOption[];
   selectedProfessionalId: string | null;
   selectedProfessional: BookingProfessionalOption | undefined;
@@ -19,6 +20,7 @@ export function BookingProfessionalStep({
   localStartTime,
   isLoadingProfessionals,
   professionalsError,
+  professionalNotice,
   availableProfessionals,
   selectedProfessionalId,
   selectedProfessional,
@@ -54,6 +56,15 @@ export function BookingProfessionalStep({
           <strong className="text-white">{localStartTime}</strong>
         </p>
       </div>
+
+      {professionalNotice && (
+        <p
+          role="status"
+          className="mt-4 rounded-xl border border-amber-700 bg-amber-950/30 p-4 text-amber-100"
+        >
+          {professionalNotice}
+        </p>
+      )}
 
       <BookingProfessionalSelection
         isLoadingProfessionals={isLoadingProfessionals}

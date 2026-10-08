@@ -43,6 +43,9 @@ export function BookingFlow({ services }: BookingFlowProps) {
   const [professionalsError, setProfessionalsError] = useState<string | null>(
     null,
   );
+  const [professionalNotice, setProfessionalNotice] = useState<string | null>(
+    null,
+  );
 
   const [customerDetails, setCustomerDetails] =
     useState<BookingCustomerDetails | null>(null);
@@ -90,6 +93,7 @@ export function BookingFlow({ services }: BookingFlowProps) {
   }
 
   function resetProfessionalStep() {
+    setProfessionalNotice(null);
     setSelectedProfessionalId(null);
     setAvailableProfessionals([]);
     setProfessionalsError(null);
@@ -221,6 +225,14 @@ export function BookingFlow({ services }: BookingFlowProps) {
       const data: CreateBookingResponse = await response.json();
 
       if (!response.ok) {
+        if (data.code === "SLOT_UNAVAILABLE") {
+          await handleContinueToProfessional();
+          setProfessionalNotice(
+            "O profissional escolhido não está mais disponível nesse horário.",
+          );
+          return;
+        }
+
         setBookingSubmissionError(
           data.error ?? "Não foi possível confirmar o agendamento.",
         );
@@ -267,6 +279,7 @@ export function BookingFlow({ services }: BookingFlowProps) {
   if (currentStep === "professional" && selectedService && selectedSlot) {
     return (
       <BookingProfessionalStep
+        professionalNotice={professionalNotice}
         serviceName={selectedService.name}
         localStartTime={selectedSlot.localStartTime}
         isLoadingProfessionals={isLoadingProfessionals}
@@ -274,9 +287,10 @@ export function BookingFlow({ services }: BookingFlowProps) {
         availableProfessionals={availableProfessionals}
         selectedProfessionalId={selectedProfessionalId}
         selectedProfessional={selectedProfessional}
-        onSelectProfessional={(professionalId) =>
-          setSelectedProfessionalId(professionalId)
-        }
+        onSelectProfessional={(professionalId) => {
+          setProfessionalNotice(null);
+          setSelectedProfessionalId(professionalId);
+        }}
         onBackToTimeSlot={handleBackToTimeSlot}
         onContinue={handleContinueToCustomer}
       />
